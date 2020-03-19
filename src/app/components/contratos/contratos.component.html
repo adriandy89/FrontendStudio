@@ -1,0 +1,209 @@
+<div class="main">
+  <div class="w3-content" style="max-width: 900px;position:relative">
+    <div class="w3-container w3-animate-zoom">
+      <a mat-fab routerLink="/contratos/nuevo"><b style="font-size: xx-large;">+</b></a><b class="w3-text-dark-gray w3-medium">Nuevo Contrato</b>
+    </div>
+    <div class="w3-container">
+      <div class="w3-card-4 formulario w3-animate-top">
+        <div class="w3-content w3-text-dark-gray">
+          <br>
+          <h1 class="w3-center">Gestionar Contratos</h1>
+          <hr>
+        </div>
+        <div class="w3-container w3-padding-small">
+          <form #frmLogin="ngForm">
+
+            <div class="w3-content">
+              <div class="w3-content w3-half w3-small">
+                <mat-radio-group [(ngModel)]="radio2" (change)="filtrarTipo(radio2)" name="floatLabel" required>
+                  <mat-radio-button value="">
+                    <div style="width: 80px;">Todos</div>
+                  </mat-radio-button>
+                  <mat-radio-button value="Intervalo">
+                    <div style="width: 80px;">Intervalo</div>
+                  </mat-radio-button>
+                  <mat-radio-button value="Sin">
+                    <div style="width: 80px;">Sin Filto</div>
+                  </mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div class="w3-content w3-half w3-left-align w3-small" *ngIf="radio2!='Sin'">
+                <mat-radio-group [(ngModel)]="radio" (change)="filtrar(radio)" name="floatLabel2" required>
+                  <mat-radio-button color="primary" value="Pendiente">
+                    <div style="width: 80px;">Pendientes</div>
+                  </mat-radio-button>
+                  <mat-radio-button color="primary" value="Terminado">
+                    <div style="width: 80px;">Terminados</div>
+                  </mat-radio-button>
+                  <mat-radio-button color="primary" value="Entregado">
+                    <div style="width: 80px;">Entregados</div>
+                  </mat-radio-button>
+                </mat-radio-group>
+              </div>
+            </div>
+
+            <div class="w3-container">
+              <div class="w3-content w3-third w3-left-align w3-medium"  *ngIf="radio2!=''">
+                Desde:
+                <mat-form-field color="accent" class="matInput w3-margin-left w3-medium">
+                  <input (keyup.enter)="getContratosIntervalo()" matInput autofocus [(ngModel)]="fechaCita" [ngModelOptions]="{standalone: true}"
+                    [matDatepicker]="picker" placeholder="Mes/Día/Año" (dateChange)="getContratosIntervalo()"
+                    required>
+                  <mat-datepicker disabled="false" touchUi #picker></mat-datepicker>
+                </mat-form-field>
+                <a (click)="picker.open()" class="w3-bar-item w3-button w3-padding-small w3-hover-dark-gray w3-round-large">
+                  <img src="../../../assets/iconos/calendario2.png" style=" width: 45px; height: 45px;" alt="Calendario">
+                </a>
+              </div>
+              <div class="w3-content w3-third w3-left-align w3-medium"  *ngIf="radio2!=''">
+                Hasta:
+                <mat-form-field color="accent" class="matInput w3-margin-left w3-medium">
+                  <input (keyup.enter)="getContratosIntervalo()" matInput [min]="fechaCita" [(ngModel)]="fechaCita2" [ngModelOptions]="{standalone: true}"
+                    [matDatepicker]="picker2" placeholder="Mes/Día/Año" (dateChange)="getContratosIntervalo()"
+                    required>
+                  <mat-datepicker disabled="false" touchUi #picker2></mat-datepicker>
+                </mat-form-field>
+                <a (click)="picker2.open()" class="w3-bar-item w3-button w3-padding-small w3-hover-dark-gray w3-round-large">
+                  <img src="../../../assets/iconos/calendario2.png" style=" width: 45px; height: 45px;" alt="Calendario2">
+                </a>
+              </div>
+              <div class="w3-content w3-third w3-right">
+                <mat-form-field class="w3-content w3-auto w3-margin-left">
+                  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Buscar" [disabled]="radio!=''">
+                </mat-form-field>
+              </div>
+            </div>
+
+
+            <div class="w3-content">
+              <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort>
+                <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column | titlecase}} </th>
+                  <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+                </ng-container>
+
+                <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+                <ng-container matColumnDef="expandedDetail">
+                  <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+                    <div class="example-element-detail"
+                      [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                      <div class="example-element-detail-borders">
+                        <div class="example-element-description w3-small">
+                          <div id="print-{{element.numero_contrato}}">
+                          <table style="font-family: arial, sans-serif; border-collapse: collapse; width: 100%;">
+                            <tr class="tr">
+                              <th class="th">No.</th>
+                              <th class="th">Creado</th>
+                              <th class="th">Cita</th>
+                              <th class="th">Hora</th>
+                              <th class="th">Entrega</th>
+                            </tr>
+                            <tr class="tr">
+                              <td class="td">{{element.numero_contrato}}</td>
+                              <td class="td">{{element.fecha_creado | date}}</td>
+                              <td class="td">{{element.fecha_cita | date}}</td>
+                              <td class="td">{{element.hora_cita}}</td>
+                              <td class="td">{{element.fecha_entrega | date}}</td>
+                            </tr>
+                          </table>
+                          <table style="font-family: arial, sans-serif; border-collapse: collapse; width: 100%; margin-top: 4px;">
+                            <tr class="tr">
+                              <th class="th">CI.</th>
+                              <th class="th">Nombre y Apellidos</th>
+                              <th class="th">Edad</th>
+                            </tr>
+                            <tr class="tr">
+                              <td class="td">{{element.ci}}</td>
+                              <td class="td">{{element.nombre}} {{element.apellidos}}</td>
+                              <td class="td">{{element.edad}}</td>
+                            </tr>
+                          </table>
+                          <table style="font-family: arial, sans-serif; border-collapse: collapse; width: 100%; margin-top: 4px;">
+                            <tr class="tr">
+                              <th class="th">Contrato</th>
+                              <th class="th">Precio</th>
+                              <th class="th">Adelanto</th>
+                              <th class="th">Por Pagar</th>
+                            </tr>
+                            <tr class="tr">
+                              <td class="td">{{element.tipo_contrato}}</td>
+                              <td class="td">$ {{element.precio}}</td>
+                              <td class="td">$ {{element.adelanto}}</td>
+                              <td class="td">$ {{element.precio-element.adelanto}}</td>
+                            </tr>
+                          </table>
+                          <table *ngIf="element.fecha_terminado" style="font-family: arial, sans-serif; border-collapse: collapse; width: 100%; margin-top: 4px;">
+                            <tr class="tr">
+                              <th class="th">Terminado</th>
+                              <th class="th">Entregado</th>
+                            </tr>
+                            <tr class="tr">
+                              <td class="td"> {{element.fecha_terminado | date}}</td>
+                              <td class="td" *ngIf="element.fecha_entregado"> {{element.fecha_entregado | date}}</td>
+                              <td class="td" *ngIf="!element.fecha_entregado">Sin Entregar</td>
+                            </tr>
+                          </table>
+                          <div style="display: inline-flex; width: 100%; margin-bottom: 5px;">
+                            <table style="font-family: arial, sans-serif; border-collapse: collapse; width: 50%; margin-top: 4px;">
+                              <tr class="tr">
+                                <th class="th">Foto</th>
+                                <th class="th">Cantidad</th>
+                              </tr>
+                              <tr class="tr" *ngFor="let foto of element.fotos">
+                                <td class="td">{{foto.dimension}}</td>
+                                <td class="td">{{foto.cantidad}}</td>
+                              </tr>
+                            </table>
+                            <table style="font-family: arial, sans-serif; border-collapse: collapse; width: 50%; margin-top: 4px;">
+                              <tr class="tr">
+                                <th class="th">Accesorio</th>
+                                <th class="th">Cantidad</th>
+                              </tr>
+                              <tr class="tr" *ngFor="let acces of element.accesorios">
+                                <td class="td">{{acces.tipo}}</td>
+                                <td class="td">{{acces.cantidad}}</td>
+                              </tr>
+                            </table>
+                          </div>
+                        </div>
+                          <br>
+                          <div class="example-button-row w3-center">
+                            <button mat-raised-button color="primary" (click)="modificar(element._id)">Modificar</button>
+                            <button mat-raised-button color="warn" (click)="eliminar(element._id)">Eliminar</button>
+                            <button *ngIf="element.estado=='Pendiente'" mat-raised-button class="w3-transparent w3-text-blue-gray" disabled>Pendiente</button>
+                            <button *ngIf="element.estado=='Pendiente'" mat-raised-button class="w3-green" (click)="cambiarEstado(element._id)">Terminar</button>
+                            <button *ngIf="element.estado=='Terminado'" mat-raised-button class="w3-transparent w3-text-blue-gray" disabled>Terminado</button>
+                            <button *ngIf="element.estado=='Terminado'" mat-raised-button class="w3-green" (click)="cambiarEstado(element._id)">Entregar</button>
+                            <button *ngIf="element.estado=='Entregado'" mat-raised-button class="w3-transparent w3-text-blue-gray" disabled>Entregado</button>
+                            <button mat-raised-button color="accent" printSectionId="print-{{element.numero_contrato}}" styleSheetFile="../../../assets/tabla.css" ngxPrint>IMPRIMIR</button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+                <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
+                  [class.example-expanded-row]="expandedElement === element"
+                  (click)="expandedElement = expandedElement === element ? null : element">
+                </tr>
+                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+              </table>
+              <div class="w3-center" *ngIf="this.dataSource.data.length==0">
+                <label class="w3-text-dark-gray">* No Existen Contratos *</label>
+              </div>
+              <mat-paginator [pageSizeOptions]="[15, 30, 50, 100]"></mat-paginator>
+              <div class="w3-container">
+                <hr>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

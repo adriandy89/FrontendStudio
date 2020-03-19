@@ -1,0 +1,96 @@
+<style>
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Montserrat", sans-serif
+  }
+
+  .w3-row-padding img {
+    margin-bottom: 12px
+  }
+
+  .achicar {
+            width: 50px;
+            height: 50px;
+        }
+
+  /* Set the width of the sidebar to 100px */
+
+  .w3-sidebar {
+    width: 132px;
+    background: linear-gradient(-225deg, #5D9FFF 0%, #B8DCFF 48%, #6BBBFF 100%);
+  }
+</style>
+
+<ng-container *ngIf="_api.getUsuario()!=null">
+  <nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center w3-display-topleft">
+
+
+    <a routerLink="/inicio" class="w3-bar-item w3-button w3-padding-large w3-hover-dark-gray">
+      <img src="../../../assets/iconos/casa.png" class="achicar" alt="Inicio">
+    </a>
+    <a routerLink="/contratos" class="w3-bar-item w3-button w3-padding-large w3-hover-dark-gray">
+      <img src="../../../assets/iconos/firma.png" class="achicar" alt="Contratos">
+    </a>
+    <a routerLink="/tiposcontratos" class="w3-bar-item w3-button w3-padding-large w3-hover-dark-gray">
+      <img src="../../../assets/iconos/licencias.png" class="achicar" alt="Tipos de Contratos">
+    </a>
+    <a routerLink="/fotos" class="w3-bar-item w3-button w3-padding-large w3-hover-dark-gray">
+      <img src="../../../assets/iconos/fotos2.png" class="achicar" alt="Tipos de Fotos">
+    </a>
+    <a routerLink="/accesorios" class="w3-bar-item w3-button w3-padding-large w3-hover-dark-gray">
+      <img src="../../../assets/iconos/paquete2.png" class="achicar" alt="Tipos de Accesorios">
+    </a>
+    <a *ngIf="_api.getUsuario().dataUser.isAdmin" routerLink="/estadisticas" class="w3-bar-item w3-button w3-padding-large w3-hover-dark-gray">
+      <img src="../../../assets/iconos/deuda.png" class="achicar" alt="Estadisticas">
+    </a>
+    <a *ngIf="_api.getUsuario().dataUser.isAdmin" routerLink="/usuarios" class="w3-bar-item w3-button w3-padding-large w3-hover-dark-gray">
+      <img src="../../../assets/iconos/apoyo.png" class="achicar" alt="Usuarios">
+    </a>
+    <a (click)="logout()" class="w3-bar-item w3-button w3-padding-large w3-hover-dark-gray">
+      <img src="../../../assets/iconos/salir.png" class="achicar" alt="Salir">
+    </a>
+  </nav>
+  <!-- Navbar on small screens (Hidden on medium and large screens) -->
+
+  <div class="w3-content">
+    <div class="w3-bar w3-theme w3-hide-large w3-hide-medium w3-small w3-dark-gray">
+      <div class="w3-content">
+        <a routerLink="/inicio" class="w3-bar-item w3-button w3-padding-16">INICIO</a>
+        <div class="w3-dropdown-hover">
+          <button class="w3-button w3-padding-16">
+            CONTRATOS
+          </button>
+          <div class="w3-dropdown-content w3-card-4 w3-bar-block">
+            <a routerLink="/contratos/nuevo" class="w3-bar-item w3-button">Nuevo Contrato</a>
+            <a routerLink="/contratos" class="w3-bar-item w3-button">Lista Completa</a>
+          </div>
+        </div>
+        <div class="w3-dropdown-hover">
+          <button class="w3-button w3-padding-16">
+            GESTIONAR
+          </button>
+          <div class="w3-dropdown-content w3-card-4 w3-bar-block">
+            <a routerLink="/tiposcontratos" class="w3-bar-item w3-button">Tipos de Contratos</a>
+            <a routerLink="/fotos" class="w3-bar-item w3-button">Fotos</a>
+            <a routerLink="/accesorios" class="w3-bar-item w3-button">Accesorios</a>
+          </div>
+        </div>
+        <div class="w3-dropdown-hover">
+          <button class="w3-button w3-padding-16">
+            ADMIN
+          </button>
+          <div class="w3-dropdown-content w3-card-4 w3-bar-block">
+            <a *ngIf="_api.getUsuario().dataUser.isAdmin" routerLink="/estadisticas" class="w3-bar-item w3-button">Estadisticas</a>
+            <a *ngIf="_api.getUsuario().dataUser.isAdmin" routerLink="/usuarios" class="w3-bar-item w3-button">Usuarios</a>
+            <a (click)="logout()" class="w3-bar-item w3-button">Salir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

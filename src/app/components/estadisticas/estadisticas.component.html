@@ -1,0 +1,93 @@
+<div class="main">
+  <div class="w3-content" style="max-width: 900px;position:relative">
+    <div class="w3-container">
+      <div class="w3-card-4 formulario w3-animate-top">
+        <div class="w3-content w3-text-dark-gray">
+          <br>
+          <h1 class="w3-center">Estadísticas - Contratos</h1>
+          <hr>
+        </div>
+        <div class="w3-container w3-padding-small">
+          <form #frmLogin="ngForm">
+
+            <div class="w3-content">
+              <div class="w3-content w3-third w3-left-align w3-medium">
+                Desde:
+                <mat-form-field color="accent" class="matInput w3-margin-left w3-medium">
+                  <input (keyup.enter)="getEstadisticas()" matInput autofocus [(ngModel)]="fechaCita" [ngModelOptions]="{standalone: true}"
+                    [matDatepicker]="picker" placeholder="Mes/Día/Año" (dateChange)="getEstadisticas()"
+                    required>
+                  <mat-datepicker disabled="false" touchUi #picker></mat-datepicker>
+                </mat-form-field>
+                <a (click)="picker.open()" class="w3-bar-item w3-button w3-padding-small w3-hover-dark-gray w3-round-large">
+                  <img src="../../../assets/iconos/calendario2.png" style=" width: 45px; height: 45px;" alt="Calendario">
+                </a>
+              </div>
+              <div class="w3-content w3-third w3-left-align w3-medium">
+                Hasta:
+                <mat-form-field color="accent" class="matInput w3-margin-left w3-medium">
+                  <input (keyup.enter)="getEstadisticas()" matInput [min]="fechaCita" [(ngModel)]="fechaCita2" [ngModelOptions]="{standalone: true}"
+                    [matDatepicker]="picker2" placeholder="Mes/Día/Año" (dateChange)="getEstadisticas()"
+                    required>
+                  <mat-datepicker disabled="false" touchUi #picker2></mat-datepicker>
+                </mat-form-field>
+                <a (click)="picker2.open()" class="w3-bar-item w3-button w3-padding-small w3-hover-dark-gray w3-round-large">
+                  <img src="../../../assets/iconos/calendario2.png" style=" width: 45px; height: 45px;" alt="Calendario2">
+                </a>
+              </div>
+            </div>
+
+            <div class="w3-content">
+              <div class="example-element-description w3-small">
+                <div id="print-">
+                <table style="font-family: arial, sans-serif; background-color: white; border-collapse: collapse; width: 100%;">
+                  <tr class="tr">
+                    <th class="th" style="width: 33%;">Ingresos</th>
+                    <th class="th" style="width: 33%;">Cantidad</th>
+                    <th class="th" style="width: 33%;">Nuevos</th>
+                  </tr>
+                  <tr class="tr">
+                    <td class="td" style="width: 33%;">$ {{ingresos}}</td>
+                    <td class="td" style="width: 33%;"> {{total}}</td>
+                    <td class="td" style="width: 33%;"> {{nuevos}}</td>
+                  </tr>
+                </table>
+                <table style="font-family: arial, sans-serif; background-color: white; border-collapse: collapse; width: 100%;">
+                  <tr class="tr">
+                    <th class="th" style="width: 33%;">Pendientes</th>
+                    <th class="th" style="width: 33%;">Terminados</th>
+                    <th class="th" style="width: 33%;">Entregados</th>
+                  </tr>
+                  <tr class="tr">
+                    <td class="td" style="width: 33%;"> {{pendientes}}</td>
+                    <td class="td" style="width: 33%;"> {{terminados}}</td>
+                    <td class="td" style="width: 33%;"> {{entregados}}</td>
+                  </tr>
+                </table>
+                <div class="w3-content w3-center">
+                    <div style="margin-top: 10px;" [chart]="chart" *ngIf="total>0"></div>
+                </div>
+
+              </div>
+                <br>
+                <div class="example-button-row w3-center">
+                  <button mat-raised-button color="accent" printSectionId="print-" styleSheetFile="../../../assets/tabla.css" ngxPrint>IMPRIMIR</button>
+                </div>
+                <br>
+                <div class="w3-container w3-justify w3-text-blue-gray w3-small w3-light-gray w3-card-4" style="border-radius: 15px;">
+                  <i><p>* Para el cálculo de los Ingresos se toman los precios de los contratos en el período escogido.
+                    Si el contrato fue creado anterior al periodo pero entregado dentro de este, se descuenta el pago adelantado.
+                    Si el contrato fue creado dentro del periodo pero no ha sido entregado, solo se incluye el pago adelantado.
+                  </p></i>
+                </div>
+              </div>
+
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

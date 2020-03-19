@@ -1,0 +1,280 @@
+<div class="main">
+  <div class="w3-content" style="max-width: 900px;position:relative">
+      <div class="w3-card-4 formulario w3-animate-top">
+          <div class="w3-content w3-text-dark-gray">
+            <div class="w3-content w3-right">
+              <button routerLink="/contratos" class="w3-pale-red w3-hover-red w3-text-black w3-large w3-circle">x</button>
+             </div>
+            <br>
+            <h1 class="w3-center">Nuevo Contrato</h1>
+            <hr>
+          </div>
+          <form #frmLogin="ngForm" (ngSubmit)="setContrato()">
+            <div class="w3-container">
+              <h3 class="w3-margin-left">Seleccionar Fechas:</h3>
+              <div class="w3-content">
+                <div class="w3-half w3-padding">
+                  <label class="w3-third w3-left">* Cita:</label>
+                  <mat-form-field color="accent" class="w3-twothird">
+                    <input matInput [(ngModel)]="fechaCita" [ngModelOptions]="{standalone: true}" [min]="minDate"
+                      [matDatepicker]="picker" placeholder="Mes/Día/Año" disabled (dateChange)="getHoraTipoNombrePorFechaCita()"
+                      required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker disabled="false" touchUi #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                <div class="w3-half w3-padding">
+                  <label class="w3-third w3-left">* Entrega:</label>
+                  <mat-form-field color="accent" class="w3-twothird">
+                    <input matInput [(ngModel)]="fechaEntrega" [ngModelOptions]="{standalone: true}" [min]="minDate"
+                      [matDatepicker]="picker1" placeholder="Mes/Día/Año" disabled (dateChange)="validarFechas()" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker disabled="false" touchUi #picker1></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="w3-content">
+                <div class="w3-half w3-padding">
+                  <label class="w3-third w3-left">* Hora:</label>
+                  <input class="w3-twothird" type="time" name="hora_cita" placeholder="hora" [(ngModel)]="hora_cita" required>
+                </div>
+                <div class="w3-half w3-padding">
+                  <p class="w3-text-red"> {{mensaje}} </p>
+                </div>
+              </div>
+            </div>
+            <div class="w3-container">
+              <hr>
+            </div>
+
+            <div class="w3-container">
+              <h3 class="w3-margin-left">Citas: {{fechaCita | date}}</h3>
+              <div class="w3-content">
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                  <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
+                    <th mat-header-cell *matHeaderCellDef> {{column | titlecase}} </th>
+                    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+              <div class="w3-center" *ngIf="this.dataSource.data.length==0">
+                <label class="w3-text-red">* No hay Contratos para este dia *</label>
+              </div>
+              <div class="w3-container">
+                <hr>
+              </div>
+            </div>
+
+            <div class="w3-container">
+                <h3 class="w3-margin-left"> Datos Personales:</h3>
+                <div class="w3-content">
+                  <div class="w3-half">
+                    <input type="text" placeholder="Nombre *" class="inputs" name="nombre" id="nombre"
+                      [(ngModel)]="contrato.nombre" required />
+                  </div>
+                  <div class="w3-half">
+                    <input type="text" placeholder="Apellidos *" class="inputs" name="apellidos" id="apellidos"
+                      [(ngModel)]="contrato.apellidos" required />
+                  </div>
+                </div>
+
+                <div class="w3-content">
+                  <div class="w3-half">
+                    <input type="number" name="ci" placeholder="CI *" class="inputs" [(ngModel)]="contrato.ci" required />
+                  </div>
+                  <div class="w3-half">
+                    <input type="number" name="edad" placeholder="Edad *" class="inputs" [(ngModel)]="contrato.edad"
+                      required />
+                  </div>
+                </div>
+
+                <div class="w3-content">
+                  <div class="w3-half">
+                    <a mat-mini-fab color="accent" (click)="agregar()" [disabled]="this.telefonos.length>4">
+                      <b style="font-size: large;">+</b>
+                    </a>
+                    <a mat-mini-fab color="accent" (click)="eliminar()" [disabled]="this.telefonos.length<2">
+                      <b style="font-size: large;">-</b>
+                    </a>
+                    <label>Telefonos:</label>
+                  </div>
+                  <div class="w3-half">
+                    <input class="inputs" type="tel" name="telefono1" placeholder="Telefono *" [(ngModel)]="telefonos[0]"
+                      required>
+                    <input class="inputs" *ngIf="this.telefonos.length>1" type="tel" name="telefono2" placeholder="Telefono *"
+                      [(ngModel)]="telefonos[1]" required>
+                    <input class="inputs" *ngIf="this.telefonos.length>2" type="tel" name="telefono3" placeholder="Telefono *"
+                      [(ngModel)]="telefonos[2]" required>
+                    <input class="inputs" *ngIf="this.telefonos.length>3" type="tel" name="telefono4" placeholder="Telefono *"
+                      [(ngModel)]="telefonos[3]" required>
+                    <input class="inputs" *ngIf="this.telefonos.length>4" type="tel" name="telefono5" placeholder="Telefono *"
+                      [(ngModel)]="telefonos[4]" required>
+                  </div>
+                </div>
+            </div>
+            <div class="w3-container">
+              <hr>
+            </div>
+
+            <div class="w3-container">
+              <h3 class="w3-margin-left">Tipo de Contrato</h3>
+              <div class="w3-content">
+                <div class="w3-container w3-half">
+                  <label class="w3-third">* Tipo: </label>
+                  <mat-form-field class="w3-twothird" required>
+                    <mat-label>Seleccionar contrato</mat-label>
+                    <mat-select [(ngModel)]="selectContrato" name="contrat" required>
+                      <mat-option value="---">
+                        Sin Contrato
+                      </mat-option>
+                      <ng-container *ngIf="tiposContratos.length>0">
+                        <mat-option *ngFor="let contrato of tiposContratos" [value]="contrato.tipo">
+                          {{contrato.tipo}}
+                        </mat-option>
+                      </ng-container>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="w3-container w3-half">
+                  <div class="w3-content">
+                    <label class="w3-third">Pagado: </label>
+                    <input class="w3-twothird" type="number" min="0" name="adelanto" placeholder="Pago Adelantado"
+                      [(ngModel)]="contrato.adelanto" required>
+                  </div>
+                </div>
+              </div>
+              </div>
+              <div class="w3-container">
+                <div class="w3-container w3-half">
+                  <label class="w3-third">* Cálculo: </label>
+                  <mat-radio-group class="w3-twothird" [(ngModel)]="radio" name="floatLabel" required>
+                    <mat-radio-button value="auto">Automático</mat-radio-button>
+                    <mat-radio-button value="manual">Manual</mat-radio-button>
+                  </mat-radio-group>
+                </div>
+                <div class="w3-container w3-half">
+                  <ng-container *ngIf="radio=='manual'">
+                    <label class="w3-third">A Pagar: </label>
+                    <input class="w3-twothird" type="number" min="0" name="precio" placeholder="Precio"
+                      [(ngModel)]="precioFinal" required>
+                  </ng-container>
+                  <ng-container *ngIf="radio=='auto'">
+                    <label class="w3-third">A Pagar: </label>
+                    <input class="w3-twothird" type="number" min="0" name="precio2" placeholder="Precio"
+                      [value]="calcularPrecio()" readonly required>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="w3-container"><hr></div>
+
+              <div class="w3-content">
+
+                <ng-container *ngIf="selectContrato=='---' && tipoFotos.length>0">
+                  <div class="w3-container">
+                    <h3 class="w3-margin-left">Fotos</h3>
+                    <div class="w3-container">
+                      <div class="w3-half">
+                        <a mat-mini-fab color="accent" (click)="agregarFoto()"
+                          [disabled]="fotos.length>=tipoFotos.length">
+                          <b style="font-size: large;">+</b>
+                        </a>
+                        <a mat-mini-fab color="accent" (click)="eliminarFoto()" [disabled]="fotos.length<1">
+                          <b style="font-size: large;">-</b>
+                        </a>
+                      </div>
+                      <div class="w3-half">
+                        <br>
+                      </div>
+                    </div>
+
+                    <div class="w3-container" *ngFor="let foto of fotos">
+                      <div class="w3-container w3-margin-bottom">
+                        <p style="border-bottom-style: dashed; border-width: 1px; padding: 4px;"></p>
+                      </div>
+                      <div class="w3-container w3-half">
+                        <label class="w3-third">* Dimensión: </label>
+                        <mat-form-field class="w3-twothird" required>
+                          <mat-label>{{foto.dimension}}</mat-label>
+                          <mat-select (closed)="dimensionActual=''" (opened)="guardarDimensionActual(foto.dimension)"
+                            (selectionChange)="comprobarDimensionRepetida(foto.dimension)"
+                            [(ngModel)]="foto.dimension" [ngModelOptions]="{standalone: true}" required>
+                            <mat-option *ngFor="let fotoA of dimensionesActuales" [value]="fotoA.dimension">
+                              {{fotoA.dimension}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="w3-container w3-half">
+                        <label class="w3-third">* Cantidad:</label>
+                        <input class="w3-twothird" type="number" min="1" [ngModelOptions]="{standalone: true}"
+                          placeholder="# de Fotos" [(ngModel)]="foto.cantidad" required>
+                      </div>
+                    </div>
+                    <div class="w3-container"><hr></div>
+                  </div>
+
+                </ng-container>
+
+                <ng-container class="w3-container" *ngIf="selectContrato=='---' && tipoAccesorios.length>0">
+                  <div class="w3-container">
+                    <h3 class="w3-margin-left">Accesorios</h3>
+                    <div class="w3-container">
+                      <div class="w3-half">
+                        <a mat-mini-fab color="accent" (click)="agregarAccesorio()"
+                          [disabled]="accesorios.length>=tipoAccesorios.length">
+                          <b style="font-size: large;">+</b>
+                        </a>
+                        <a mat-mini-fab color="accent" (click)="eliminarAccesorio()" [disabled]="accesorios.length<1">
+                          <b style="font-size: large;">-</b>
+                        </a>
+                      </div>
+                      <div class="w3-half">
+                        <br>
+                      </div>
+                    </div>
+
+                    <div class="w3-container" *ngFor="let accesorio of accesorios">
+                      <div class="w3-container w3-margin-bottom">
+                        <p style="border-bottom-style: dashed; border-width: 1px; padding: 4px;"></p>
+                      </div>
+                      <div class="w3-container w3-half">
+                        <label class="w3-third">* Tipo: </label>
+                        <mat-form-field class="w3-twothird" required>
+                          <mat-label>{{accesorio.tipo}}</mat-label>
+                          <mat-select (closed)="accesorioActual=''" (opened)="guardarAccesorioActual(accesorio.tipo)"
+                            (selectionChange)="comprobarAccesorioRepetido(accesorio.tipo)"
+                            [(ngModel)]="accesorio.tipo" [ngModelOptions]="{standalone: true}" required>
+                            <mat-option *ngFor="let accesorioA of accesoriosActuales" [value]="accesorioA.tipo">
+                              {{accesorioA.tipo}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="w3-container w3-half">
+                        <label class="w3-third">* Cantidad:</label>
+                        <input class="w3-twothird" type="number" min="1" [ngModelOptions]="{standalone: true}"
+                          placeholder="# de Accesorios" [(ngModel)]="accesorio.cantidad" required>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+
+
+            <div class="w3-container">
+              <hr>
+            </div>
+            <div class="w3-container w3-center">
+              <input type="submit" value="REGISTRAR" class="w3-button w3-green" id="btn-registrar"
+                [disabled]="frmLogin.invalid || radio=='' || fechaCita>fechaEntrega || validar()==false" />
+            </div>
+            <div class="w3-container w3-margin-bottom">
+              <br>
+            </div>
+          </form>
+        </div>
+  </div>
+</div>
+

@@ -1,0 +1,142 @@
+<div class="main">
+  <div class="w3-content" style="max-width: 900px;position:relative">
+    <div class="w3-card-4 formulario w3-animate-top">
+      <div class="w3-content w3-text-dark-gray">
+        <br>
+        <h1 class="w3-center">Gestionar Fotos</h1>
+        <hr>
+      </div>
+      <form #frmLogin="ngForm">
+        <div class="w3-container">
+          <mat-form-field class="w3-margin-left">
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Buscar">
+          </mat-form-field>
+          <div class="w3-content">
+
+            <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort>
+              <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column | titlecase}} </th>
+                <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+              </ng-container>
+
+              <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+              <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+                  <div class="example-element-detail"
+                    [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                    <div class="example-element-detail-borders">
+                      <div class="example-element-description w3-small">
+                        <table style="font-family: arial, sans-serif; border-collapse: collapse; width: 100%;">
+                          <tr class="tr">
+                            <th class="th">Creado</th>
+                            <th class="th">Dimensiones</th>
+                            <th class="th">Precio</th>
+                            <th class="th">Características</th>
+                          </tr>
+                          <tr class="tr">
+                            <td class="td">{{element.fecha_creacion | date}}</td>
+                            <td class="td">{{element.dimension}}</td>
+                            <td class="td">$ {{element.precio}}</td>
+                            <td class="td">{{element.descripcion}}</td>
+                          </tr>
+                        </table>
+                        <br>
+                        <div class="example-button-row w3-center" *ngIf="isAdm">
+                          <button mat-raised-button color="primary"
+                            (click)="modificarFoto(element._id)">Modificar</button>
+                          <button mat-raised-button color="warn" (click)="eliminarFoto(element._id)">Eliminar</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+              <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
+                [class.example-expanded-row]="expandedElement === element"
+                (click)="expandedElement = expandedElement === element ? null : element">
+              </tr>
+              <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            </table>
+            <div class="w3-center" *ngIf="this.dataSource.data.length==0">
+              <label class="w3-text-red">* No Existen Tipos de Fotos Definidas *</label>
+            </div>
+            <mat-paginator [pageSizeOptions]="[15, 25, 50, 100]"></mat-paginator>
+          </div>
+          <div *ngIf="isAdm">
+            <div class="w3-container">
+              <hr>
+            </div>
+            <ng-container class="w3-container" *ngIf="modificar==false">
+              <h3 class="w3-margin-left">Agregar</h3>
+              <div class="container">
+                <div class="w3-half">
+                  <a mat-mini-fab color="accent" (click)="agregarTrue()" [disabled]="agregar">
+                    <b style="font-size: large;">+</b>
+                  </a>
+                  <a mat-mini-fab color="accent" (click)="agregarFalse()" [disabled]="!agregar">
+                    <b style="font-size: large;">-</b>
+                  </a>
+                </div>
+                <div class="w3-half">
+                  <br>
+                </div>
+              </div>
+              <div class="w3-container" *ngIf="agregar==true">
+                <div class="w3-content">
+                  <div class="w3-third">
+                    <input class="inputs" type="text" placeholder="Dimensión" name="dimension" [(ngModel)]="dimension"
+                      required>
+                  </div>
+                  <div class="w3-third">
+                    <input class="inputs" type="number" min="0.01" placeholder="Precio" name="precio"
+                      [(ngModel)]="precio" required>
+                  </div>
+                  <div class="w3-third">
+                    <input class="inputs" type="text" placeholder="Descripción" name="descripcion"
+                      [(ngModel)]="descripcion" required>
+                  </div>
+                </div>
+                <div class="w3-container w3-center">
+                  <br>
+                  <input type="button" class="w3-button w3-green" (click)="agregarFoto()" value="Guardar"
+                    [disabled]="frmLogin.invalid || precio<0.01" />
+                </div>
+              </div>
+
+            </ng-container>
+
+            <ng-container class="w3-container" *ngIf="modificar==true">
+              <h3 class="w3-margin-left">Modificar</h3>
+              <div class="w3-container">
+                <div class="w3-third">
+                  <input class="inputs" type="text" placeholder="Dimensión" name="dimension" [(ngModel)]="dimension"
+                    required>
+                </div>
+                <div class="w3-third">
+                  <input class="inputs" type="number" min="0.01" placeholder="Precio" name="precio" [(ngModel)]="precio"
+                    required>
+                </div>
+                <div class="w3-third">
+                  <input class="inputs" type="text" placeholder="Descripción" name="descripcion"
+                    [(ngModel)]="descripcion" required>
+                </div>
+              </div>
+              <div class="w3-container w3-center example-button-row">
+                <br>
+                <button mat-raised-button color="primary" (click)="actualizar()"
+                  [disabled]="frmLogin.invalid || precio<0.01">Actualizar</button>
+                <button mat-raised-button color="warn" (click)="modificar=false">Cancelar</button>
+              </div>
+            </ng-container>
+          </div>
+
+        </div>
+        <div class="w3-container">
+          <hr>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
