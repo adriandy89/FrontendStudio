@@ -6,7 +6,7 @@ import { Router } from "@angular/router";
 import {MatTableDataSource} from '@angular/material/table'
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 import {
@@ -64,6 +64,7 @@ export class ContratosComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private contratosService: ContratosService,
     private router: Router,
@@ -95,8 +96,10 @@ export class ContratosComponent implements OnInit {
 	}
 
   getContratos() {
+    this.spinner.show();
     this.contratosService.getContratos().subscribe(
       (data: any[]) => {
+        this.spinner.hide();
         if (data.length>0) {
           this.dataSource = new MatTableDataSource(data);
           this.dataSource.paginator = this.paginator;
@@ -105,6 +108,7 @@ export class ContratosComponent implements OnInit {
         else{this.dataSource = new MatTableDataSource()}
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.router.navigateByUrl("/login")
       }
@@ -114,8 +118,10 @@ export class ContratosComponent implements OnInit {
     if (this.fechaCita>this.fechaCita2) {
       this.fechaCita2=this.fechaCita
     }
+    this.spinner.show();
     this.contratosService.getContratosIntervalo({ fecha_cita: this.fechaCita, fecha_cita2: this.fechaCita2 }).subscribe(
       (data: any[]) => {
+        this.spinner.hide();
         console.log(data)
         if (data.length>0) {
           this.dataSource = new MatTableDataSource(data);
@@ -125,6 +131,7 @@ export class ContratosComponent implements OnInit {
         else{this.dataSource = new MatTableDataSource()}
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.router.navigateByUrl("/login")
       }
@@ -135,14 +142,17 @@ export class ContratosComponent implements OnInit {
     this.dialogService.openConfirmDialog('Seguro que deseas Eliminar el Contrato?').afterClosed().subscribe( res => {
       if (res) {
         this.contratosService.setContratoId(id);
+        this.spinner.show();
         this.contratosService.deleteContrato().subscribe(
           data => {
+            this.spinner.hide();
             localStorage.removeItem("CONTRATO_ID");
             console.log(data)
             this.showNotification( 'success', 'Contrato Eliminado!' )
             this.getContratos()
           },
           err => {
+            this.spinner.hide();
             console.log("Ha ocurrido un Error: ", err)
             this.showNotification( 'error', 'Error de Conexión!' )
           }
@@ -164,8 +174,9 @@ export class ContratosComponent implements OnInit {
     this.dialogService.openConfirmDialog('Desea Cambiar el Estado del Contrato?').afterClosed().subscribe( res => {
       if (res) {
         this.contratosService.setContratoId(id);
+        this.spinner.show();
         this.contratosService.getContrato().subscribe(
-          data => {
+          data => {            
             let contrato= data;
             if (contrato.estado == "Pendiente") {
               contrato.estado= "Terminado"
@@ -176,19 +187,24 @@ export class ContratosComponent implements OnInit {
             }
             this.contratosService.updateContrato(contrato).subscribe(
               data => {
+                this.spinner.hide();
                 console.log("OK OK OK", data);
                 this.showNotification( 'success', 'Estado del Contrato Actualizado!' )
                 this.radio=""
                 this.getContratos();
               },
               err => {
+                this.spinner.hide();
                 console.log("Ha ocurrido un Error: ", err)
                 this.showNotification( 'error', 'Error de Conexión!' )
               }
             );
 
           },
-          err => console.log("Ha ocurrido un Error: ", err)
+          err => {
+            this.spinner.hide();
+            console.log("Ha ocurrido un Error: ", err)
+          }
         );
         }
     })

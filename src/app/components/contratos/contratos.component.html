@@ -120,12 +120,14 @@
                           </table>
                           <table style="font-family: arial, sans-serif; border-collapse: collapse; width: 100%; margin-top: 4px;">
                             <tr class="tr">
+                              <th class="th">Teléfono</th>
                               <th class="th">Contrato</th>
                               <th class="th">Precio</th>
                               <th class="th">Adelanto</th>
                               <th class="th">Por Pagar</th>
                             </tr>
                             <tr class="tr">
+                              <td class="td">{{element.telefono[0]}}</td>
                               <td class="td">{{element.tipo_contrato}}</td>
                               <td class="td">$ {{element.precio}}</td>
                               <td class="td">$ {{element.adelanto}}</td>
@@ -191,9 +193,13 @@
                 </tr>
                 <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
               </table>
-              <div class="w3-center" *ngIf="this.dataSource.data.length==0">
+              <div class="w3-center w3-white" *ngIf="this.dataSource.data.length==0">
                 <label class="w3-text-dark-gray">* No Existen Contratos *</label>
               </div>
+              <ngx-spinner bdOpacity=0.9 bdColor="rgba(135, 184, 246, 0.7)" size="default" color="#fff" type="ball-newton-cradle"
+                [fullScreen]="false">
+                <p style="color: white"> Conectando... </p>
+              </ngx-spinner>
               <mat-paginator [pageSizeOptions]="[15, 30, 50, 100]"></mat-paginator>
               <div class="w3-container">
                 <hr>

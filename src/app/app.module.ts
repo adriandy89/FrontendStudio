@@ -1,9 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from "@angular/forms"
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import {NgxPrintModule} from 'ngx-print';
 import { ChartModule } from 'angular-highcharts';
+import { NgxSpinnerModule } from "ngx-spinner";
 
 import { MatTableModule } from "@angular/material/table"
 import { MatFormFieldModule } from "@angular/material/form-field"
@@ -129,8 +130,10 @@ const customNotifierOptions: NotifierOptions = {
     MatDialogModule,
     NgxPrintModule,
     ChartModule,
+    NgxSpinnerModule,
     NotifierModule.withConfig(customNotifierOptions)
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
   bootstrap: [AppComponent]
 })

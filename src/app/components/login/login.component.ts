@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 @Component({
@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private _api: ApiService,
     private router: Router
@@ -47,12 +48,15 @@ export class LoginComponent implements OnInit {
 
   onLogin(form): void {
     this.error = false
+    this.spinner.show();
     this._api.login(form.value).subscribe(
       res => {
+        this.spinner.hide();
         this.showNotification( 'success', `Bienvenido ${this._api.dataUser.dataUser.nombre} ${this._api.dataUser.dataUser.apellidos}!` )
         this.router.navigateByUrl('/inicio')
       },
       err => {
+        this.spinner.hide();
         if (err.status == 403) {
           this.error = true
           this.showNotification( 'warning', 'Compruebe Usuario y Contraseña!' )

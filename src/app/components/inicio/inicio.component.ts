@@ -6,7 +6,7 @@ import { Router } from "@angular/router";
 import {MatTableDataSource} from '@angular/material/table'
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 import {
@@ -61,6 +61,7 @@ export class InicioComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private contratosService: ContratosService,
     private router: Router,
@@ -96,8 +97,10 @@ export class InicioComponent implements OnInit {
     if (this.fechaCita>this.fechaCita2) {
       this.fechaCita2=this.fechaCita
     }
+    this.spinner.show();
     this.contratosService.getContratosPendientesIntervalo({ fecha_cita: this.fechaCita, fecha_cita2: this.fechaCita2 }).subscribe(
       (data: any[]) => {
+        this.spinner.hide();
         if (data.length>0) {
           this.dataSource = new MatTableDataSource(data);
           this.dataSource.paginator = this.paginator;
@@ -106,6 +109,7 @@ export class InicioComponent implements OnInit {
         else{this.dataSource = new MatTableDataSource()}
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Error de Conexión!' )
         this.router.navigateByUrl("/login")
@@ -117,14 +121,17 @@ export class InicioComponent implements OnInit {
     this.dialogService.openConfirmDialog('Seguro que deseas Eliminar el Contrato?').afterClosed().subscribe( res => {
       if (res) {
         this.contratosService.setContratoId(id);
+        this.spinner.show();
         this.contratosService.deleteContrato().subscribe(
           data => {
+            this.spinner.hide();
             localStorage.removeItem("CONTRATO_ID");
             console.log(data)
             this.showNotification( 'success', 'Contrato Eliminado!' )
             this.getContratos()
           },
           err => {
+            this.spinner.hide();
             console.log("Ha ocurrido un Error: ", err)
             this.showNotification( 'error', 'Error de Conexión!' )
           }
@@ -145,23 +152,25 @@ export class InicioComponent implements OnInit {
   cambiarEstado(id: string) {
     this.dialogService.openConfirmDialog('Desea Cambiar el Estado del Contrato?').afterClosed().subscribe( res => {
       if (res) {
+        this.spinner.show();
         this.contratosService.setContratoId(id);
         this.contratosService.getContrato().subscribe(
-          data => {
+          data => {            
             let contrato= data;
             if (contrato.estado == "Pendiente") {
               contrato.estado= "Terminado"
             } else if (contrato.estado == "Terminado") {
               contrato.estado= "Entregado"
             }
-
             this.contratosService.updateContrato(contrato).subscribe(
               data => {
+                this.spinner.hide();
                 console.log("OK OK OK", data);
                 this.showNotification( 'success', 'Estado del Contrato Actualizado!' )
                 this.getContratos();
               },
               err => {
+                this.spinner.hide();
                 console.log("Ha ocurrido un Error: ", err)
                 this.showNotification( 'error', 'Error de Conexión!' )
               }
@@ -169,6 +178,7 @@ export class InicioComponent implements OnInit {
 
           },
           err => {
+            this.spinner.hide();
             console.log("Ha ocurrido un Error: ", err)
             this.showNotification( 'error', 'Error de Conexión!' )
           }

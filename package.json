@@ -25,6 +25,7 @@
     "angular-notifier": "^6.0.1",
     "highcharts": "^8.0.4",
     "ngx-print": "^1.2.0-beta.3",
+    "ngx-spinner": "^9.0.1",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
