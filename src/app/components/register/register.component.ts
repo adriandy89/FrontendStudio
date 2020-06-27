@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 @Component({
@@ -28,6 +28,7 @@ export class RegisterComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private _api: ApiService,
     private router: Router
@@ -45,7 +46,6 @@ export class RegisterComponent implements OnInit {
     this._api.validarToken().subscribe(
       data => {
         console.log(data)
-
       },
       err => { console.log(err)
         this.router.navigateByUrl('/')}
@@ -63,8 +63,10 @@ export class RegisterComponent implements OnInit {
 	}
 
   onLogin(form): void {
+    this.spinner.show();
     this._api.loginRegister(form.value).subscribe(
       res => {
+        this.spinner.hide();
         console.log(res.dataUser)
         if (res.dataUser.isAdmin==true) {
           this.isLogued = true
@@ -77,6 +79,7 @@ export class RegisterComponent implements OnInit {
         }
       },
       err => {
+        this.spinner.hide();
         if (err.status == 403) {
           this.error = true
           this.mensaje = "Usuario o Contraseña incorrectos"
@@ -88,7 +91,9 @@ export class RegisterComponent implements OnInit {
   }
 
   onRegister(form): void {
+    this.spinner.show();
     this._api.register(form.value).subscribe(res => {
+      this.spinner.hide();
       console.log(res)
       if (res.error) {
         this.showNotification( 'error', 'Ya existe ese Usuario!' )
@@ -96,8 +101,8 @@ export class RegisterComponent implements OnInit {
         this.showNotification( 'success', 'Nuevo Usuario Creado!' )
         this.router.navigateByUrl('/usuarios');
       }
-
     }, err => {
+      this.spinner.hide();
       console.log(err)
       this.showNotification( 'error', 'Error de Conexión!' )
     });

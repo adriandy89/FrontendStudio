@@ -16,9 +16,9 @@ export class ApiService {
 
   constructor(private httpClient: HttpClient) {
     this.token= ""
-    //let arr = document.location.href.split('/',3)
-    //this.api_url= `${arr[0]}//${arr[2]}/api`;
-    this.api_url= 'http://localhost:3000/api';
+    let arr = document.location.href.split('/',3)
+    this.api_url= `${arr[0]}//${arr[2]}/api`;
+    //this.api_url= 'http://localhost:3000/api';
   }
 
   register(user: User): Observable<LoginResponse>{

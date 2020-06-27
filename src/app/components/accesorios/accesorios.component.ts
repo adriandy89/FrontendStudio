@@ -8,6 +8,7 @@ import {MatTableDataSource} from '@angular/material/table'
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 import {
@@ -65,6 +66,7 @@ export class AccesoriosComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private accesorioService: AccesoriosService,
     private contratosService: ContratosService,
@@ -110,14 +112,17 @@ export class AccesoriosComponent implements OnInit {
     data.tipo= this.tipo
     data.precio= this.precio
     data.descripcion= this.descripcion
+    this.spinner.show();
     this.accesorioService.setAccesorio(data).subscribe(
       dat => {
+        this.spinner.hide();
         this.getTiposAccesorios()
         this.agregarFalse()
         this.showNotification( 'success', 'Accesorio Agregado!' )
         console.log("OK OK OK", dat);
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Ha ocurrido un Error!' )
      }
@@ -141,8 +146,10 @@ export class AccesoriosComponent implements OnInit {
   eliminarAccesorio(id: string) {
     this.dialogService.openConfirmDialog('Seguro que deseas Eliminar el Accesorio?').afterClosed().subscribe( res => {
       if (res) {
+        this.spinner.show();
         this.accesorioService.deleteAccesorio(id).subscribe(
           data => {
+            this.spinner.hide();
             this.getTiposAccesorios()
             this.modificar=false
             this.agregarFalse()
@@ -150,6 +157,7 @@ export class AccesoriosComponent implements OnInit {
             this.showNotification( 'success', 'Accesorio Eliminado!' )
           },
           err => {
+            this.spinner.hide();
             console.log("Ha ocurrido un Error: ", err)
             this.showNotification( 'error', 'Ha ocurrido un Error!' )
          }
@@ -161,8 +169,10 @@ export class AccesoriosComponent implements OnInit {
   modificarAccesorio(id: string) {
     this.dialogService.openConfirmDialog('Seguro que deseas Modificar el Accesorio?').afterClosed().subscribe( res => {
       if (res) {
+        this.spinner.show();
         this.accesorioService.getAccesorio(id).subscribe(
           data => {
+            this.spinner.hide();
             this.Accesorio = data
             console.log(this.Accesorio)
             this.tipo= this.Accesorio.tipo
@@ -170,7 +180,10 @@ export class AccesoriosComponent implements OnInit {
             this.descripcion= this.Accesorio.descripcion
             this.modificar=true
           },
-          err => console.log(err)
+          err => {
+            this.spinner.hide();
+            console.log(err)
+          }
         )
         }
     })
@@ -180,8 +193,10 @@ export class AccesoriosComponent implements OnInit {
       this.Accesorio.tipo= this.tipo
       this.Accesorio.precio= this.precio
       this.Accesorio.descripcion= this.descripcion
+      this.spinner.show();
       this.accesorioService.updateAccesorio(this.Accesorio._id, this.Accesorio).subscribe(
         data => {
+          this.spinner.hide();
           this.getTiposAccesorios()
           console.log("OK OK OK", data);
           this.showNotification( 'success', 'Accesorio Modificado!' )
@@ -191,6 +206,7 @@ export class AccesoriosComponent implements OnInit {
           this.descripcion= null
         },
         err => {
+          this.spinner.hide();
           console.log("Ha ocurrido un Error: ", err)
           this.showNotification( 'error', 'Ha ocurrido un Error!' )
        }
@@ -200,8 +216,10 @@ export class AccesoriosComponent implements OnInit {
 
 
   getTiposAccesorios() {
+    this.spinner.show();
     this.contratosService.getTipoAccesorios().subscribe(
       data => {
+        this.spinner.hide();
         if (data.error) {
           console.log(data);
           this.dataSource = new MatTableDataSource();
@@ -213,6 +231,7 @@ export class AccesoriosComponent implements OnInit {
         }
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Ha ocurrido un Error!' )
      }

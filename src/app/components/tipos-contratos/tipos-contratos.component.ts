@@ -8,6 +8,7 @@ import {MatTableDataSource} from '@angular/material/table'
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 import {
@@ -62,6 +63,7 @@ export class TiposContratosComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private tipoContratoService: TiposContratosService,
     private contratosService: ContratosService,
