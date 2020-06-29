@@ -3,7 +3,7 @@ import { TiposContratosService } from 'src/app/services/tipos-contratos.service'
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { ContratosService } from 'src/app/services/contratos.service';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 @Component({
@@ -40,6 +40,7 @@ export class TiposContratosAgregarComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private contratosService: ContratosService,
     private tiposContratosService: TiposContratosService,
@@ -79,13 +80,16 @@ export class TiposContratosAgregarComponent implements OnInit {
     this.contrato.descripcion = this.descripcion;
     this.contrato.fotos = this.getFotos();
     this.contrato.accesorios = this.getAccesorios();
+    this.spinner.show();
     this.tiposContratosService.setContrato(this.contrato).subscribe(
       data => {
+        this.spinner.hide();
         console.log("OK OK OK", data);
         this.showNotification( 'success', 'Nuevo Tipo de Contrato Agregado!' )
         this.router.navigateByUrl("/tiposcontratos");
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Ha ocurrido un Error!' )
      }

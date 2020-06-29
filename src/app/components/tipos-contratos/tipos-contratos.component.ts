@@ -98,8 +98,10 @@ export class TiposContratosComponent implements OnInit {
 	}
 
   getContratos() {
+    this.spinner.show();
     this.contratosService.getTiposContratos().subscribe(
       (data: any[]) => {
+        this.spinner.hide();
         if (data.length>0) {
           this.dataSource = new MatTableDataSource(data);
           this.dataSource.paginator = this.paginator;
@@ -108,6 +110,7 @@ export class TiposContratosComponent implements OnInit {
         else{this.dataSource = new MatTableDataSource()}
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.router.navigateByUrl("/login")
       }
@@ -117,12 +120,15 @@ export class TiposContratosComponent implements OnInit {
   eliminar(id: string) {
     this.dialogService.openConfirmDialog('Seguro que deseas Eliminar el Tipo de Contrato?').afterClosed().subscribe( res => {
       if (res) {
+        this.spinner.show();
         this.tipoContratoService.deleteContrato(id).subscribe(
           data => {
+            this.spinner.hide();
             this.showNotification( 'success', 'Tipo de Contrato Eliminado!' )
             this.getContratos()
           },
           err => {
+            this.spinner.hide();
             console.log("Ha ocurrido un Error: ", err)
             this.showNotification( 'error', 'Error de Conexión!' )
           }

@@ -3,7 +3,7 @@ import { TiposContratosService } from 'src/app/services/tipos-contratos.service'
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { ContratosService } from 'src/app/services/contratos.service';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 @Component({
@@ -40,6 +40,7 @@ export class TiposContratosModificarComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private contratosService: ContratosService,
     private tiposContratosService: TiposContratosService,
@@ -75,8 +76,10 @@ export class TiposContratosModificarComponent implements OnInit {
 	}
 
   getContrato() {
+    this.spinner.show();
     this.tiposContratosService.getContrato(this.contratosService.getContratoId()).subscribe(
       async data => {
+        this.spinner.hide();
         this.contrato = data;
         this.tipo= this.contrato.tipo;
         this.precioFinal= this.contrato.precio;
@@ -105,6 +108,7 @@ export class TiposContratosModificarComponent implements OnInit {
         });
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Ha ocurrido un Error!' )
      }
@@ -113,6 +117,7 @@ export class TiposContratosModificarComponent implements OnInit {
 
   //------------------
   updateContrato() {
+    this.spinner.show();
     this.contrato.tipo = this.tipo;
     this.contrato.precio = this.precioFinal;
     this.contrato.descripcion = this.descripcion;
@@ -120,11 +125,13 @@ export class TiposContratosModificarComponent implements OnInit {
     this.contrato.accesorios = this.getAccesorios();
     this.tiposContratosService.updateContrato(this.contratosService.getContratoId(), this.contrato).subscribe(
       data => {
+        this.spinner.hide();
         console.log("OK OK OK", data);
         this.showNotification( 'success', 'Tipo de Contrato Modificado!' )
         this.router.navigateByUrl("/tiposcontratos");
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Ha ocurrido un Error!' )
      }

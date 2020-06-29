@@ -5,7 +5,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import {MatTableDataSource} from '@angular/material/table'
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 import {
@@ -58,6 +58,7 @@ export class UsuariosComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     public router: Router,
     private _api: ApiService,
@@ -88,8 +89,10 @@ export class UsuariosComponent implements OnInit {
 	}
 
   getUsuarios() {
+    this.spinner.show();
     this._api.getUsuarios().subscribe(
       (data: any[]) => {
+        this.spinner.hide();
         if (data.length>0) {
           this.dataSource = new MatTableDataSource(data);
           this.dataSource.paginator = this.paginator;
@@ -98,6 +101,7 @@ export class UsuariosComponent implements OnInit {
         else{this.dataSource = new MatTableDataSource()}
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.router.navigateByUrl("/login")
       }
@@ -107,13 +111,16 @@ export class UsuariosComponent implements OnInit {
   eliminar(id: string) {
     this.dialogService.openConfirmDialog('Seguro que deseas Eliminar el Usuario?').afterClosed().subscribe( res => {
       if (res) {
+        this.spinner.show();
         this._api.deleteUsuario(id).subscribe(
             data => {
+              this.spinner.hide();
               console.log(data)
               this.showNotification( 'success', 'Usuario Eliminado!' )
               this.getUsuarios()
             },
             err => {
+              this.spinner.hide();
               console.log("Ha ocurrido un Error: ", err)
               this.showNotification( 'error', 'Ha ocurrido un Error!' )
             }

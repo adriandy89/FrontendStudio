@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 @Component({
@@ -30,6 +30,7 @@ export class UsuariosModificarComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private _api: ApiService,
     private router: Router)
@@ -64,8 +65,10 @@ export class UsuariosModificarComponent implements OnInit {
 	}
 
   onLogin(form): void {
+    this.spinner.show();
     this._api.loginRegister(form.value).subscribe(
       res => {
+        this.spinner.hide();
         console.log(res.dataUser)
         if (res.dataUser.isAdmin==true) {
           this.isLogued = true
@@ -78,6 +81,7 @@ export class UsuariosModificarComponent implements OnInit {
         }
       },
       err => {
+        this.spinner.hide();
         if (err.status == 403) {
           this.error = true
           this.mensaje = "Usuario o Contraseña incorrectos"
@@ -90,13 +94,16 @@ export class UsuariosModificarComponent implements OnInit {
 
   cargarDatos(){
     let id = localStorage.getItem('USER_ID') || null
+    this.spinner.show();
     this._api.getUsuarioXId(id).subscribe( res => {
+      this.spinner.hide();
       console.log(res)
       this.usuario.nombre= res.nombre
       this.usuario.apellidos=res.apellidos
       this.usuario.usuario=res.usuario
       this.checked=res.isAdmin
     }, err => {
+      this.spinner.hide();
       console.log(err)
       this.showNotification( 'error', 'Error de Conexión!' )
     })
@@ -105,13 +112,16 @@ export class UsuariosModificarComponent implements OnInit {
   onRegister(): void {
     let id = localStorage.getItem('USER_ID') || null
     this.usuario.isAdmin=this.checked
+    this.spinner.show();
     this._api.updateUsuario(id, this.usuario).subscribe(
       data => {
+        this.spinner.hide();
         console.log("OK OK OK", data);
         this.showNotification( 'success', 'Usuario Modificado!' )
         this.router.navigateByUrl("/usuarios");
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Error de Conexión!' )
       }

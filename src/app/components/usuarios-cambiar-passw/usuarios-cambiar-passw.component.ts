@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 @Component({
@@ -31,6 +31,7 @@ export class UsuariosCambiarPasswComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private _api: ApiService,
     private router: Router)
@@ -64,8 +65,10 @@ export class UsuariosCambiarPasswComponent implements OnInit {
 	}
 
   onLogin(form): void {
+    this.spinner.show();
     this._api.loginRegister(form.value).subscribe(
       res => {
+        this.spinner.hide();
         console.log(res.dataUser)
         if (res.dataUser.isAdmin==true) {
           this.isLogued = true
@@ -77,6 +80,7 @@ export class UsuariosCambiarPasswComponent implements OnInit {
         }
       },
       err => {
+        this.spinner.hide();
         if (err.status == 404) {
           this.error = true
           this.mensaje = "Usuario o Contraseña incorrectos"
@@ -93,13 +97,16 @@ export class UsuariosCambiarPasswComponent implements OnInit {
       this.showNotification( 'warning', 'La contraseña no coincide!' )
     }else{
     let id = localStorage.getItem('USER_ID') || null
+    this.spinner.show();
     this._api.updateUsuario(id, this.usuario).subscribe(
       data => {
+        this.spinner.hide();
         console.log("OK OK OK", data);
         this.showNotification( 'success', 'Contraseña Cambiada!' )
         this.router.navigateByUrl("/usuarios");
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Error de Conexión!' )
       }
