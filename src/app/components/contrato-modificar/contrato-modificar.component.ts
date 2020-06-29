@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import { Contrato } from "src/app/models/interfaces";
 import { MatTableDataSource } from "@angular/material/table";
 import { ApiService } from "src/app/services/api.service";
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 @Component({
@@ -50,6 +50,7 @@ export class ContratoModificarComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private contratosService: ContratosService,
     public router: Router,
@@ -86,8 +87,10 @@ export class ContratoModificarComponent implements OnInit {
 	}
 
   getContrato() {
+    this.spinner.show();
     this.contratosService.getContrato().subscribe(
       data => {
+        this.spinner.hide();
         this.contrato = data;
         console.log(this.contrato);
         this.selectContrato = this.contrato.tipo_contrato;
@@ -119,6 +122,7 @@ export class ContratoModificarComponent implements OnInit {
         }
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Ha ocurrido un Error!' )
       }
@@ -136,13 +140,16 @@ export class ContratoModificarComponent implements OnInit {
     this.contrato.estado = "Pendiente";
     this.contrato.fotos = this.getFotos();
     this.contrato.accesorios = this.getAccesorios();
+    this.spinner.show();
     this.contratosService.updateContrato(this.contrato).subscribe(
       data => {
+        this.spinner.hide();
         console.log("OK OK OK", data);
         this.showNotification( 'success', 'Contrato Modificado!' )
         this.router.navigateByUrl("/contratos");
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Ha ocurrido un Error!' )
       }

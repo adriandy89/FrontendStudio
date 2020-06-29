@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import { Contrato } from "src/app/models/interfaces";
 import { MatTableDataSource } from "@angular/material/table";
 import { ApiService } from "src/app/services/api.service";
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 @Component({
@@ -50,6 +50,7 @@ export class ContratoAgregarComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private contratosService: ContratosService,
     public router: Router,
@@ -97,13 +98,16 @@ export class ContratoAgregarComponent implements OnInit {
     this.contrato.accesorios = await this.getAccesorios();
     this.getNuevoNumeroContrato();
     if (this.contrato.numero_contrato != null) {
+      this.spinner.show();
       this.contratosService.setContrato(this.contrato).subscribe(
         data => {
+          this.spinner.hide();
           console.log("OK OK OK", data);
           this.showNotification( 'success', 'Nuevo Contrato Agregado!' )
           this.router.navigateByUrl("/contratos");
         },
         err => {
+          this.spinner.hide();
           console.log("Ha ocurrido un Error: ", err)
           this.showNotification( 'error', 'Ha ocurrido un Error!' )
        }

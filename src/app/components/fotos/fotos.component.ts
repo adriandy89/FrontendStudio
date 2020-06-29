@@ -7,7 +7,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import {MatTableDataSource} from '@angular/material/table'
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-
+import { NgxSpinnerService } from "ngx-spinner";
 import { NotifierService } from 'angular-notifier';
 
 import {
@@ -65,6 +65,7 @@ export class FotosComponent implements OnInit {
 	 * @param {NotifierService} notifier Notifier service
 	 */
   constructor(
+    private spinner: NgxSpinnerService,
     notifier: NotifierService,
     private fotoService: FotosService,
     private contratosService: ContratosService,
@@ -135,10 +136,12 @@ export class FotosComponent implements OnInit {
   }
 
   eliminarFoto(id: string) {
+    this.spinner.show();
     this.dialogService.openConfirmDialog('Seguro que deseas Eliminar el Tipo de Foto?').afterClosed().subscribe( res => {
       if (res) {
         this.fotoService.deleteFoto(id).subscribe(
           data => {
+            this.spinner.hide();
             this.getTiposFotos()
             this.modificar=false
             this.agregarFalse()
@@ -146,6 +149,7 @@ export class FotosComponent implements OnInit {
             this.showNotification( 'success', 'Foto Eliminada!' )
           },
           err => {
+            this.spinner.hide();
             console.log("Ha ocurrido un Error: ", err)
             this.showNotification( 'error', 'Ha ocurrido un Error!' )
          }
@@ -155,10 +159,12 @@ export class FotosComponent implements OnInit {
   }
 
   modificarFoto(id: string) {
+    this.spinner.show();
     this.dialogService.openConfirmDialog('Seguro que deseas Modificar el Tipo de Foto?').afterClosed().subscribe( res => {
       if (res) {
         this.fotoService.getFoto(id).subscribe(
           data => {
+            this.spinner.hide();
             this.Foto= data
             console.log(this.Foto)
             this.dimension= this.Foto.dimension
@@ -166,7 +172,10 @@ export class FotosComponent implements OnInit {
             this.descripcion= this.Foto.descripcion
             this.modificar=true
           },
-          err => console.log(err)
+          err => {
+            this.spinner.hide();
+            console.log(err)
+          }
         )
         }
     })
@@ -197,8 +206,10 @@ export class FotosComponent implements OnInit {
 
 
   getTiposFotos() {
+    this.spinner.show();
     this.contratosService.getTiposFotos().subscribe(
       data => {
+        this.spinner.hide();
         if (data.error) {
           console.log(data);
           this.dataSource = new MatTableDataSource();
@@ -210,6 +221,7 @@ export class FotosComponent implements OnInit {
         }
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.showNotification( 'error', 'Ha ocurrido un Error!' )
      }

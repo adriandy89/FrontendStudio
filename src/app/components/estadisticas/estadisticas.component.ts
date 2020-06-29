@@ -3,6 +3,7 @@ import { ContratosService } from "../../services/contratos.service";
 import { ApiService } from "src/app/services/api.service";
 import { Router } from "@angular/router";
 import { Chart } from 'angular-highcharts';
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
   selector: 'app-estadisticas',
@@ -23,6 +24,7 @@ export class EstadisticasComponent implements OnInit {
   nuevos=0
 
   constructor(
+    private spinner: NgxSpinnerService,
     private contratosService: ContratosService,
     private router: Router,
     private _api: ApiService
@@ -47,8 +49,10 @@ export class EstadisticasComponent implements OnInit {
     if (this.fechaCita>this.fechaCita2) {
       this.fechaCita2=this.fechaCita
     }
+    this.spinner.show();
     this.contratosService.getEstadisticas({ fecha_cita: this.fechaCita, fecha_cita2: this.fechaCita2 }).subscribe(
       data => {
+        this.spinner.hide();
         console.log(data)
         if (!data.error) {
           this.ingresos= data.ingresos
@@ -70,6 +74,7 @@ export class EstadisticasComponent implements OnInit {
         }
       },
       err => {
+        this.spinner.hide();
         console.log("Ha ocurrido un Error: ", err)
         this.router.navigateByUrl("/login")
       }
