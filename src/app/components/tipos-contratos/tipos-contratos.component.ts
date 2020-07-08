@@ -99,14 +99,17 @@ export class TiposContratosComponent implements OnInit {
   getContratos() {
     this.spinner.show();
     this.contratosService.getTiposContratos().subscribe(
-      (data: any[]) => {
-        this.spinner.hide();
+      (data: any[]) => {        
         if (data.length>0) {
           this.dataSource = new MatTableDataSource(data);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
+          this.spinner.hide();
         }
-        else{this.dataSource = new MatTableDataSource()}
+        else{
+          this.dataSource = new MatTableDataSource()
+          this.spinner.hide();
+        }        
       },
       err => {
         this.spinner.hide();
