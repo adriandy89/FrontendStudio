@@ -2,6 +2,8 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.4.
 
+## Web App for Manage a Photo Studio
+
 ## EXAMPLE APP:
 
 ![Screenshot](docs/1.jpg)
